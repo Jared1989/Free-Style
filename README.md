@@ -46,6 +46,8 @@ Confirm that the repository contains an app directory and a testing directory
 
 ## Usage
 
+View the [current day's MLB matchups](http://www.espn.com/mlb/schedule) to determine which games you want to analyze 
+
 Run the recommendation script:
 
 ```sh
@@ -63,7 +65,7 @@ If script has been previously run:
 If script hasn't previously been run or after the previous step:
 
 ```sh
-# Enter two MLB team name abbreviations separated by a comma and a space (ex: NYM, NYY)
+# Among the current day MLB matchups, enter two MLB team name abbreviations separated by a comma and a space (ex: NYM, NYY)
 
 # If you don't know the team name abbreviations, type "help" for a list and then repeat the previous step
 
