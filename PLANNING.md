@@ -10,7 +10,7 @@ The primary user is an amateur sports gambler who bets on Major League Baseball 
 
 As a sports gambler who desires to increase his/her odds of winning bets, the user can benefit from a tool that performs statistical analysis to determine which Major League Baseball team has the best odds of winning its daily matchup.  The application specifically addresses the needs of a gambler in a survivor pool.  
 
-In the survivor pool, the goal is to correctly select the winner of one game each day.  No team can be selected more than once.  The pool ends for the gambler with one of the following outcomes:
+In the survivor pool, the goal is to correctly select the winner of one game each day.  The pool ends for the gambler with one of the following outcomes:
 1. The gambler loses a bet
 2. All other gamblers have lost a bet
 3. The gambler and at least one other competitor correctly select 30 winners in a row
@@ -41,13 +41,13 @@ The amateur gambler is currently relying on personal judgment to select teams.  
 
 ### Information Outputs
 
-1. A gambling_advice.txt file containing the teams in order of the likelihood that they win their matchup as well as the odds that each team will win (txt format).
+1. A file containing which teams are favored in their matchups based on key statistics and the odds that each team will win its matchup.  Additionally if more than 1 matchup is entered, a recommendation of which team to select for the bet will be provided (txt format).
 
 ## Technology Requirements
 
 ### APIs and Web Service Requirements
 
-The following websites will need to be accessed in order to develop the application.  I have analyzed the websites and viewed the source code.  As of now, I have been able to export the data from the websites which is necessary in order to parse it.
+The following websites will need to be accessed in order to develop the application.  I have analyzed the websites and viewed the source code.  As of now, I have been able to successfully access the data needed to develop the application.
 
 https://www.espn.com/mlb/standings
 
@@ -57,8 +57,8 @@ https://www.espn.com/mlb/standings/_/view/expanded
 
 The application requires the user to employ the third-party BeautifulSoup package in order to parse data from the HTML contents of ESPN’s MLB standings website.  Additionally, the application requires the request package to scrape the contents from the websites listed above. Furthermore, the pytest package is needed for testing purposes.  
 
-In addition to these python packages, the application will utilize the datetime, json, statistics, and random modules.  These modules are needed for developing the application logic and for creating the presentation of the output.
+In addition to these python packages, the application will utilize the datetime, json, os, csv, itertools, requests, glob, statistics, and random modules.  These modules are needed for developing the application logic and for creating the presentation of the output.
 
 ### Hardware Requirements
 
-The application will be running on my local computer. I won’t be deploying this application to a public server.
+The application will be running on the users local computer. I won’t be deploying this application to a public server.
