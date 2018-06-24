@@ -34,6 +34,12 @@
 ## Try / Except
 [Stack Overflow](https://stackoverflow.com/questions/446782/getting-out-of-a-function-in-python)
 
+## Empty Dictionary 
+[Stack Overflow](https://stackoverflow.com/questions/23177439/python-checking-if-a-dictionary-is-empty-doesnt-seem-to-work)
+
+## File Existence Check / Glob
+[Stack Overflow](https://stackoverflow.com/questions/4296138/use-wildcard-with-os-path-isfile)
+
 ## Additional Resource (including topics mentioned above)
 [GitHub: nyu-info-2335-201805](https://github.com/prof-rossetti/nyu-info-2335-201805)
 
