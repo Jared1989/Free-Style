@@ -22,7 +22,9 @@ for table in names_tables:
             team = {"id" : team_id, "abbrev": team_name, "name": team_abbrev}
             teams.append(team)
         except IndexError as e:
-            print("UNRECOGNIZED TEAMS DATA:", cell.text) #> "East" ... "Central" ... "West"
+            # Do nothing
+            dummy = 0
+            #print("UNRECOGNIZED TEAMS DATA:", cell.text) #> "East" ... "Central" ... "West"
 
 for team in teams:
     print(team)
@@ -43,6 +45,7 @@ for table in stats_tables:
         stat_values = []
         ctr = 0
         listdata = {}
+        #print("here ", len(cells))
         for cell in cells:
             if cell.text not in labels:
                 if ctr != 0:
@@ -56,6 +59,43 @@ for table in stats_tables:
 
 for stat in stats:
     print(stat)
+
+request_url = "https://www.espn.com/mlb/standings/_/view/expanded"
+response = requests.get(request_url)
+
+soup = BeautifulSoup(response.content, 'html.parser')
+
+stat_id = 0
+stats = []
+#labels = ['W', 'L', 'PCT', 'GB', 'DAY', 'NIGHT', '1-RUN', 'XTRA', 'ExWL']
+labels = ['W', 'L', 'PCT', 'GB', 'DAY', 'NIGHT', '1-RUN', 'XTRA', 'ExWL']
+stats_tables = soup.find_all("table", "Table2__table-scroller Table2__right-aligned Table2__table")
+for table in stats_tables:
+    rows = table.find_all("tr", "Table2__tr")
+    for row in rows:
+        cells = row.find_all("td")
+        # maybe lets start with these as a list. how about a list comprehension?
+        # otherwise, and perhaps ideally, you could always convert to a dictionary
+        # with keys like: "wins", "losses", "win_pct", etc.
+        # and individually assign each stat to the proper attribute
+        #stat_values = [cell.text for cell in cells] #> ['W', 'L', 'PCT', 'GB', 'HOME', 'AWAY', 'RS', 'RA', 'DIFF', 'STRK', 'L10']
+        stat_values = []
+        ctr = 0
+        listdata = {}
+        for cell in cells:
+            if ctr == 0 and cell.text not in labels:
+                listdata.update({"id" : stat_id + 1})
+                stat_id += 1
+            if cell.text not in labels:
+                listdata.update({labels[ctr] : cell.text})
+            ctr += 1
+        if len(listdata) != 0:
+            stats.append(listdata)
+
+for stat in stats:
+    print(stat)
+
+
 
 # todo: combine the teams list with the stats list
 # ... assuming they are in the same order (which should absolutely be verified)
