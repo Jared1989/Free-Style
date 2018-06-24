@@ -34,9 +34,6 @@
 ## Try / Except
 [Stack Overflow](https://stackoverflow.com/questions/446782/getting-out-of-a-function-in-python)
 
-## System Specific Parameters
-[Stack Over Flow](https://stackoverflow.com/questions/17761697/python-sys-is-not-defined)
-
 ## Additional Resource (including topics mentioned above)
 [GitHub: nyu-info-2335-201805](https://github.com/prof-rossetti/nyu-info-2335-201805)
 
