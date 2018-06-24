@@ -7,7 +7,6 @@ import itertools
 import os
 import csv
 import random
-import sys
 from glob import glob
 
 class team_opts:
@@ -27,9 +26,18 @@ class team_opts:
     def get_team_stat(self, num, stat):
         return self.team_list[num - 1][stat]
 
-    def get_team_stat_range(self, num, home_away):
-        result = self.team_list[num - 1][home_away].split('-')
+    def get_team_stat_range(self, num, range_info):
+        result = self.team_list[num - 1][range_info].split('-')
         return float(result[0]) / (float(result[0]) + float(result[1]))
+
+    def get_team_stat_char_num(self, num, char_num_info):
+        result = self.team_list[num - 1][char_num_info]
+        if result[0] == 'W':
+            mult_value = 1
+        else:
+            mult_value = -1
+        num_info = int(result[1])
+        return num_info * mult_value
 
     def __del__(self):
         return True
@@ -87,22 +95,15 @@ def get_stats(request_url, labels):
 
     return stats
 
-def write_products_to_file(filename=datetime.now().strftime('%b-%d-%Y-%H-%M-%S')+'-teams'+'.csv', teams=[]):
-
+def write_products_to_file(filename="teams.csv", teams=[]):
     filepath = os.path.join(os.path.dirname(__file__), filename)
     print(f"OVERWRITING CONTENTS OF FILE: '{filepath}' \n ... WITH {len(teams)} TEAMS")
 
-    try:
-        with open(filepath, "w") as csv_file:
-            writer = csv.DictWriter(csv_file, fieldnames=['id', 'abbrev', 'name', 'W', 'L', 'PCT', 'GB', 'HOME', 'AWAY', 'RS', 'RA', 'DIFF', 'STRK', 'L10', 'DAY', 'NIGHT', '1-RUN', 'XTRA', 'ExWL'])
-            writer.writeheader() # uses fieldnames set above
-            for t in teams:
-                writer.writerow(t)
-        status = True
-    except:
-        print("File Is Already Opened.  Close the file and please try again.")
-        status = False
-    return status
+    with open(filepath, "w") as csv_file:
+        writer = csv.DictWriter(csv_file, fieldnames=['id', 'abbrev', 'name', 'W', 'L', 'PCT', 'GB', 'HOME', 'AWAY', 'RS', 'RA', 'DIFF', 'STRK', 'L10', 'DAY', 'NIGHT', '1-RUN', 'XTRA', 'ExWL'])
+        writer.writeheader() # uses fieldnames set above
+        for t in teams:
+            writer.writerow(t)
 
 def merge_data(team_data, reg_data, ext_data):
 
@@ -111,15 +112,13 @@ def merge_data(team_data, reg_data, ext_data):
         if n['id'] == s['id'] and n['id'] == e['id']:
             New_Value = {'id':n['id'], 'abbrev':n['abbrev'], 'name':n['name'], 'W':s['W'], 'L':s['L'], 'PCT':s['PCT'], 'GB':s['GB'], 'HOME':s['HOME'], 'AWAY':s['AWAY'], 'RS':s['RS'], 'RA':s['RA'], 'DIFF':s['DIFF'], 'STRK':s['STRK'], 'L10':s['L10'], 'DAY':e['DAY'], 'NIGHT':e['NIGHT'], '1-RUN':e['1-RUN'], 'XTRA':e['XTRA'], 'ExWL':e['ExWL']}
             teams.append(dict(New_Value))
-    result = write_products_to_file(datetime.now().strftime('%b-%d-%Y-%H-%M-%S')+'-teams'+'.csv', teams)
-    if not result:
-        sys.exit(0)
+    write_products_to_file(datetime.now().strftime('%b-%d-%Y-%H-%M-%S')+'-teams'+'.csv', teams)
     return teams
 
 def purge_files():
     
     picks = glob('*-picks.txt')
-    if '-picks.txt' in picks[0]:
+    if len(picks) != 0:
         pf = input("Do you want to delete pick files (Y/N): ").upper()
         while pf not in "YN":
             print("Invalid entry. Please try again.")
@@ -254,10 +253,14 @@ def print_results(team_data_1, team_id_1, team_data_2, team_id_2, home_away, day
     Home2 = float(team_data_2.get_team_stat_range(team_id_2, 'HOME'))
     Away1 = float(team_data_1.get_team_stat_range(team_id_1, 'AWAY'))
     Away2 = float(team_data_2.get_team_stat_range(team_id_2, 'AWAY'))
+    ExWL1 = float(team_data_1.get_team_stat_range(team_id_1, 'ExWL'))
+    ExWL2 = float(team_data_2.get_team_stat_range(team_id_2, 'ExWL'))
     L101 = float(team_data_1.get_team_stat_range(team_id_1, 'L10'))
     L102 = float(team_data_2.get_team_stat_range(team_id_2, 'L10'))
     STRK1 = team_data_1.get_team_stat(team_id_1, 'STRK')
     STRK2 = team_data_2.get_team_stat(team_id_2, 'STRK')
+    STRK1_anal = float(team_data_1.get_team_stat_char_num(team_id_1, 'STRK'))
+    STRK2_anal = float(team_data_2.get_team_stat_char_num(team_id_2, 'STRK'))
     Day1 = float(team_data_1.get_team_stat_range(team_id_1, 'DAY'))
     Day2 = float(team_data_2.get_team_stat_range(team_id_2, 'DAY'))
     Night1 = float(team_data_1.get_team_stat_range(team_id_1, 'NIGHT'))
@@ -268,6 +271,7 @@ def print_results(team_data_1, team_id_1, team_data_2, team_id_2, home_away, day
     
     scores1 = 0
     scores2 = 0
+    tie = 0
     random.seed(int(datetime.now().strftime('%m%d')))
     rnd = random.randint(0,1)
 
@@ -275,11 +279,15 @@ def print_results(team_data_1, team_id_1, team_data_2, team_id_2, home_away, day
         scores1 += 1
     elif HomeAway == Team2:
         scores2 += 1
+    else:
+        tie += 1
 
     if DayNight == Team1:
         scores1 += 1
     elif DayNight == Team2:
         scores2 += 1
+    else:
+        tie += 1
 
     if L101 > L102:
         L10 = Team1
@@ -289,6 +297,27 @@ def print_results(team_data_1, team_id_1, team_data_2, team_id_2, home_away, day
         scores2 += 1
     else:
         L10 = 'Tie'
+        tie += 1
+
+    if STRK1_anal > STRK2_anal:
+        STRK = Team1
+        scores1 += 1
+    elif STRK1_anal < STRK2_anal:
+        STRK = Team2
+        scores2 += 1
+    else:
+        STRK = 'Tie'
+        tie += 1
+
+    if ExWL1 > ExWL2:
+        ExWL = Team1
+        scores1 += 1
+    elif ExWL1 < ExWL2:
+        ExWL = Team2
+        scores2 += 1
+    else:
+        ExWL = 'Tie'
+        tie += 1
  
     if DIFF1 > DIFF2:
         Runs = Team1
@@ -298,6 +327,7 @@ def print_results(team_data_1, team_id_1, team_data_2, team_id_2, home_away, day
         scores2 += 1
     else:
         Runs = 'Tie'
+        tie += 1
  
     if scores1 == scores2:
         if rnd == 0:
@@ -319,6 +349,7 @@ def print_results(team_data_1, team_id_1, team_data_2, team_id_2, home_away, day
     print("Percent: ", '{0:.3f}'.format(Percent1).center(20), " vs ", '{0:.3f}'.format(Percent2).center(20))
     print("Home:    ", '{0:.3f}'.format(Home1).center(20), " vs ", '{0:.3f}'.format(Home2).center(20))
     print("Away:    ", '{0:.3f}'.format(Away1).center(20), " vs ", '{0:.3f}'.format(Away2).center(20))
+    print("ExWL:    ", '{0:.3f}'.format(ExWL1).center(20), " vs ", '{0:.3f}'.format(ExWL2).center(20))
     print("L10:     ", '{0:.3f}'.format(L101).center(20), " vs ", '{0:.3f}'.format(L102).center(20))
     print("STRK:    ", STRK1.center(20), " vs ", STRK2.center(20))
     print("Day:     ", '{0:.3f}'.format(Day1).center(20), " vs ", '{0:.3f}'.format(Day2).center(20))
@@ -327,6 +358,8 @@ def print_results(team_data_1, team_id_1, team_data_2, team_id_2, home_away, day
     print("Field:   ", HomeAway)
     print("Time:    ", DayNight)
     print("Runs:    ", Runs)
+    print("STRK:    ", STRK)
+    print("ExWL:    ", ExWL)
     print("L10:     ", L10)
     print("Luck:    ", luck)
     print("-------------------------------------------------------------------------------------------")
@@ -353,6 +386,7 @@ def print_results(team_data_1, team_id_1, team_data_2, team_id_2, home_away, day
     file_value.write("Percent: " + " " + '{0:.3f}'.format(Percent1).center(20) + " " + " vs " + " " + '{0:.3f}'.format(Percent2).center(20) + "\r\n")
     file_value.write("Home:    " + " " + '{0:.3f}'.format(Home1).center(20) + " " + " vs " + " " + '{0:.3f}'.format(Home2).center(20) + "\r\n")
     file_value.write("Away:    " + " " + '{0:.3f}'.format(Away1).center(20) + " " + " vs " + " " + '{0:.3f}'.format(Away2).center(20) + "\r\n")
+    file_value.write("ExWL:    " + " " + '{0:.3f}'.format(ExWL1).center(20) + " " + " vs " + " " + '{0:.3f}'.format(ExWL2).center(20) + "\r\n")
     file_value.write("L10:     " + " " + '{0:.3f}'.format(L101).center(20) + " " + " vs " + " " + '{0:.3f}'.format(L102).center(20) + "\r\n")
     file_value.write("STRK:    " + " " + STRK1.center(20) + " " + " vs " + " " + STRK2.center(20) + "\r\n")
     file_value.write("Day:     " + " " + '{0:.3f}'.format(Day1).center(20) + " " + " vs " + " " + '{0:.3f}'.format(Day2).center(20) + "\r\n")
@@ -361,6 +395,8 @@ def print_results(team_data_1, team_id_1, team_data_2, team_id_2, home_away, day
     file_value.write("Field:   " + " " + HomeAway + "\r\n")
     file_value.write("Time:    " + " " + DayNight + "\r\n")
     file_value.write("Runs:    " + " " + Runs + "\r\n")
+    file_value.write("STRK:    " + " " + STRK + "\r\n")
+    file_value.write("ExWL:    " + " " + ExWL + "\r\n")
     file_value.write("L10:     " + " " + L10 + "\r\n")
     file_value.write("Luck:    " + " " + luck + "\r\n")
     file_value.write("-------------------------------------------------------------------------------------------\r\n")
@@ -379,13 +415,16 @@ def print_results(team_data_1, team_id_1, team_data_2, team_id_2, home_away, day
     file_value.write("-------------------------------------------------------------------------------------------\r\n")
     file_value.write("\r\n")
 
-    team_list = {"teams" : teams, "prob" : prob}
+    if tie == 0:
+        team_list = {"teams" : teams, "prob" : prob}
+    else:
+        team_list = {}
 
     return team_list
 
 def open_picks_file():
 
-    filename=datetime.now().strftime('%b-%d-%Y-%H-%M-%S')
+    filename=datetime.now().strftime('%b-%d-%Y-%H-%M-%S')+'-picks'+'.txt'
     file_value=open(filename,'w')
     return file_value
 
@@ -411,7 +450,7 @@ def best_bet(team_stat, file_value):
 
     file_value.write("\r\n")
     file_value.write("-------------------------------------------------------------------------------------------\r\n")
-    file_value.write("Best Bet: " + " " + max_teams, '{0:.2f}'.format(max_pct * 100) + "% to win" + "\r\n")
+    file_value.write("Best Bet:  " + max_teams + "  " + '{0:.2f}'.format(max_pct * 100) + "% to win" + "\r\n")
     file_value.write("-------------------------------------------------------------------------------------------\r\n")
     file_value.write("\r\n")
 
@@ -456,11 +495,13 @@ def run():
 
             team_outcome = print_results(team_data_1, team_id_1, team_data_2, team_id_2, ha, dn, fv)
         
-        probable.append(team_outcome)
+            if bool(team_outcome):
+                probable.append(team_outcome)
+
         team_abbrevs = get_team_abbrevs(team_data)
 
     if len(probable) > 1:
-        best_bet(probable)
+        best_bet(probable, fv)
 
     close_picks_file(fv)
 
