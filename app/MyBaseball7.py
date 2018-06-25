@@ -129,10 +129,10 @@ def purge_files():
             path = os.getcwd() 
             files = os.listdir(path)
             for name in files:
-                if "picks" in name and name.endswith(".txt") or "picks" in name and name.endswith(".csv"):
+                if "picks" in name and name.endswith(".txt") or "team" in name and name.endswith(".csv"):
                     os.remove(path + "/" + name)
                     ctr += 1
-            print(ctr, ' file(s) deleted.')
+            print(ctr, ' files deleted.')
             status = True
         else:
             status = False
