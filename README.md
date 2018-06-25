@@ -12,13 +12,13 @@ Then download your forked version of this repository using the GitHub.com online
 git clone https://github.com/YOUR_USERNAME/Free-Style.git
 ```
 
-After downloading your forked repository, navigate into its root directory except the testing instructions:
+After downloading your forked repository, navigate into its root directory:
 
 ```sh
 cd app/
 ```
 
-> NOTE: all commands in this document assume you are running them from this root directory.
+> NOTE: all commands in this document assume you are running them from this root directory except the testing instructions.
 
 Install package dependencies using one of the following commands, depending on how you have installed Python and how you are managing packages:
 
@@ -57,17 +57,15 @@ python3 app/MyBaseball7.py
 # All others:
 python app/MyBaseball7.py
 ```
-If script has been previously run:
+If script has been previously run and there are pick files in the application directory:
 
 ```sh
 # Enter yes ("y") or no ("n") to whether or not you'd like to delete the pick files
 ```
-If script hasn't previously been run or after the previous step:
+Next step (first step if the file has not been previously run or if there are no files in the application directory):
 
 ```sh
-# Among the current day MLB matchups, enter two MLB team name abbreviations separated by a comma and a space (ex: NYM, NYY)
-
-# If you don't know the team name abbreviations, type "help" for a list and then repeat the previous step
+# Among the current day MLB matchups, enter two MLB team name abbreviations separated by a comma and a space (If you don't know the team name abbreviations, type "help")
 
 # Enter whether the first team you listed is the home team or away team (ex: H)
 
@@ -75,10 +73,12 @@ If script hasn't previously been run or after the previous step:
 
 # Repeat these steps for as many matchups as you'd like
 
-# Once the user is no longer interested in entering matchups, type "Done"
+# Once the user is no longer interested in entering matchups or if all of the current day's matchups have been entered, type "Done"
 ```
 
 Finally, analyze the results in the command prompt and/or the newly created .txt file.  Then leave the application to place your bet in your MLB Survivor Pool.
+
+Note: A CSV file will also be created detailing all of the data sourced from ESPN
 
 ## Testing
 
@@ -92,3 +92,7 @@ Run tests:
 ```sh
 pytest
 ```
+
+## Disclaimer
+
+There are no guarantees that the recommendations and the win probabilities provided by this application are accurate. 
