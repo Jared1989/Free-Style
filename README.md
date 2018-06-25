@@ -78,7 +78,7 @@ Next step (first step if the file has not been previously run or if there are no
 
 Finally, analyze the results in the command prompt and/or the newly created .txt file.  Then leave the application to place your bet in your MLB Survivor Pool.
 
-Note: A CSV file will also be created detailing all of the data sourced from ESPN
+Note: A CSV file will also be created detailing all of the data sourced from ESPN.  If the user selects to delete the pick text files, the csv files will be deleted as well.
 
 ## Testing
 
