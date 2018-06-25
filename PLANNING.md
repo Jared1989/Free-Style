@@ -61,4 +61,4 @@ In addition to these python packages, the application will utilize the datetime,
 
 ### Hardware Requirements
 
-The application will be running on the users local computer. I won’t be deploying this application to a public server.
+The application will be running on the user's local computer. I won’t be deploying this application to a public server.
